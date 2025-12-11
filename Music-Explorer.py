@@ -123,7 +123,7 @@ if query:
             text=text,
             textposition="top center",
             hoverinfo='text',
-            marker=dict(size=25, color=colors)  # Increased node size
+            marker=dict(size=40, color=colors)  # Increased node size
         )
 
         fig = go.Figure(data=[edge_trace, node_trace],
