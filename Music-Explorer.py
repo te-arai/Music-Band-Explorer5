@@ -65,6 +65,21 @@ else:  # Black theme
     musician_color = "#98fb98"    # pale green
     edge_normal = "#aaaaaa"       # light gray
 
+# --- Sidebar legend/key ---
+st.sidebar.markdown("### 🔑 Color Key")
+st.sidebar.markdown(
+    f"<span style='color:{band_color}; font-weight:bold;'>■ Band</span>",
+    unsafe_allow_html=True
+)
+st.sidebar.markdown(
+    f"<span style='color:{musician_color}; font-weight:bold;'>■ Musician</span>",
+    unsafe_allow_html=True
+)
+st.sidebar.markdown(
+    f"<span style='color:{original_color}; font-weight:bold;'>■ Original Member</span>",
+    unsafe_allow_html=True
+)
+
 # --- Function to build subgraph ---
 def build_subgraph(root, radius, filter_originals):
     nodes_within_radius = [
