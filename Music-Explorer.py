@@ -46,6 +46,25 @@ query = st.sidebar.text_input(
 )
 radius = st.sidebar.slider("Connection depth (hops)", 1, 3, 2)
 filter_originals = st.sidebar.checkbox("Only Original Members", value=False)
+theme_choice = st.sidebar.selectbox("Background Theme", ["White", "Black"])
+
+# --- Theme palettes ---
+if theme_choice == "White":
+    bg_color = "white"
+    font_color = "black"
+    band_color = "#1f77b4"        # medium blue
+    original_color = "#ff7f0e"    # orange/gold
+    musician_color = "#2ca02c"    # green
+    edge_normal = "#888888"       # medium gray
+    edge_original = "#ff7f0e"     # orange
+else:  # Black theme
+    bg_color = "black"
+    font_color = "white"
+    band_color = "#6baed6"        # light blue
+    original_color = "#ffd700"    # bright gold
+    musician_color = "#98fb98"    # pale green
+    edge_normal = "#aaaaaa"       # light gray
+    edge_original = "#ffd700"     # gold
 
 # --- Function to build subgraph ---
 def build_subgraph(root, radius, filter_originals):
@@ -79,7 +98,7 @@ if query:
 
         edge_trace = go.Scatter(
             x=edge_x, y=edge_y,
-            line=dict(width=1.5, color='#888'),
+            line=dict(width=2, color=edge_normal),
             hoverinfo='none',
             mode='lines'
         )
@@ -92,11 +111,11 @@ if query:
             node_y.append(y)
             text.append(node)
             if data.get("type") == "Band":
-                colors.append("#1f77b4")  # blue
+                colors.append(band_color)
             elif data.get("original_member") == "YES":
-                colors.append("#ff7f0e")  # gold
+                colors.append(original_color)
             else:
-                colors.append("#2ca02c")  # green
+                colors.append(musician_color)
 
         node_trace = go.Scatter(
             x=node_x, y=node_y,
@@ -104,22 +123,33 @@ if query:
             text=text,
             textposition="top center",
             hoverinfo='text',
-            marker=dict(size=15, color=colors)
+            marker=dict(size=25, color=colors)  # Increased node size
         )
 
         fig = go.Figure(data=[edge_trace, node_trace],
                         layout=go.Layout(
                             showlegend=False,
                             hovermode='closest',
-                            margin=dict(b=20,l=5,r=5,t=40)
+                            margin=dict(b=20,l=5,r=5,t=40),
+                            plot_bgcolor=bg_color,
+                            paper_bgcolor=bg_color,
+                            font=dict(color=font_color),
+                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)
                         ))
 
-        # Capture clicks
+        # Capture clicks safely
         selected_points = plotly_events(fig, click_event=True, hover_event=False)
         if selected_points:
-            clicked_node = text[selected_points[0]['pointIndex']]
-            st.success(f"You clicked on: {clicked_node}")
-            # Update session state instead of forcing rerun
-            st.session_state["query"] = clicked_node
+            point = selected_points[0]
+            if "pointIndex" in point:
+                idx = point["pointIndex"]
+                if idx < len(text):
+                    clicked_node = text[idx]
+                    st.success(f"You clicked on: {clicked_node}")
+                    if st.session_state.get("query") != clicked_node:
+                        st.session_state["query"] = clicked_node
+            else:
+                st.info("Click detected, but not on a node.")
     else:
         st.warning("Name not found in dataset.")
