@@ -139,18 +139,7 @@ if query:
                         ))
 
         # Show chart with zoom/pan enabled AND capture clicks
-        selected_points = plotly_events(
-            fig,
-            click_event=True,
-            hover_event=False,
-            override_height=600,
-            override_width="100%",
-            config={
-                "scrollZoom": True,
-                "displayModeBar": True,
-                "displaylogo": False
-            }
-        )
+        selected_points = plotly_events(fig, click_event=True, hover_event=False)
 
         # Handle clicks safely
         if selected_points:
