@@ -135,16 +135,11 @@ if query:
                             font=dict(color=font_color),
                             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                            dragmode="pan"  # default to pan
+                            dragmode="pan"  # enable pan by default
                         ))
 
         # Show chart with zoom/pan enabled AND capture clicks
-        selected_points = plotly_events(
-            fig,
-            click_event=True,
-            hover_event=False,
-            config={"scrollZoom": True}  # enables mouse wheel zoom
-        )
+        selected_points = plotly_events(fig, click_event=True, hover_event=False)
 
         # Handle clicks safely
         if selected_points:
