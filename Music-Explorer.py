@@ -40,7 +40,10 @@ for _, row in connections.iterrows():
 st.title("🎶 Musician ↔ Band Explorer (Interactive)")
 
 # Sidebar controls
-query = st.sidebar.text_input("Enter a musician or band name:")
+query = st.sidebar.text_input(
+    "Enter a musician or band name:",
+    value=st.session_state.get("query", "")
+)
 radius = st.sidebar.slider("Connection depth (hops)", 1, 3, 2)
 filter_originals = st.sidebar.checkbox("Only Original Members", value=False)
 
@@ -116,8 +119,7 @@ if query:
         if selected_points:
             clicked_node = text[selected_points[0]['pointIndex']]
             st.success(f"You clicked on: {clicked_node}")
-            # Rerun query with clicked node as new root
-            st.experimental_set_query_params(node=clicked_node)
-            st.experimental_rerun()
+            # Update session state instead of forcing rerun
+            st.session_state["query"] = clicked_node
     else:
         st.warning("Name not found in dataset.")
