@@ -138,15 +138,21 @@ if query:
                             dragmode="pan"  # enable pan by default
                         ))
 
-        # Show chart with zoom/pan enabled
-        st.plotly_chart(fig, use_container_width=True, config={
-            "scrollZoom": True,
-            "displayModeBar": True,
-            "displaylogo": False
-        })
+        # Show chart with zoom/pan enabled AND capture clicks
+        selected_points = plotly_events(
+            fig,
+            click_event=True,
+            hover_event=False,
+            override_height=600,
+            override_width="100%",
+            config={
+                "scrollZoom": True,
+                "displayModeBar": True,
+                "displaylogo": False
+            }
+        )
 
-        # Capture clicks safely
-        selected_points = plotly_events(fig, click_event=True, hover_event=False)
+        # Handle clicks safely
         if selected_points:
             point = selected_points[0]
             if "pointIndex" in point:
