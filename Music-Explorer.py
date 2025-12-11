@@ -37,7 +37,7 @@ for _, row in connections.iterrows():
             G.nodes[to_node]["original_member"] = "YES"
 
 # --- Streamlit UI ---
-st.title("🎶 Musician ↔ Band Explorer (Interactive)")
+st.title("🎶 Musician ↔ Band Explorer")
 
 # Sidebar controls
 query = st.sidebar.text_input(
