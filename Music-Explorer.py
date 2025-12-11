@@ -5,8 +5,8 @@ import plotly.graph_objects as go
 from streamlit_plotly_events import plotly_events
 
 # --- Load your dataset ---
-elements = pd.read_excel("data/ArtistsBands.xlsx", sheet_name="Elements")
-connections = pd.read_excel("data/ArtistsBands.xlsx", sheet_name="Connections")
+elements = pd.read_excel("Data/ArtistsBands.xlsx", sheet_name="Elements")
+connections = pd.read_excel("Data/ArtistsBands.xlsx", sheet_name="Connections")
 
 # --- Build the undirected graph ---
 G = nx.Graph()
