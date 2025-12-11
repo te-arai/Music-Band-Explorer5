@@ -47,6 +47,7 @@ query = st.sidebar.text_input(
 radius = st.sidebar.slider("Connection depth (hops)", 1, 3, 2)
 filter_originals = st.sidebar.checkbox("Only Original Members", value=False)
 theme_choice = st.sidebar.selectbox("Background Theme", ["White", "Black"])
+node_size = st.sidebar.slider("Node size", 20, 60, 40)
 
 # --- Theme palettes ---
 if theme_choice == "White":
@@ -56,7 +57,6 @@ if theme_choice == "White":
     original_color = "#ff7f0e"    # orange/gold
     musician_color = "#2ca02c"    # green
     edge_normal = "#888888"       # medium gray
-    edge_original = "#ff7f0e"     # orange
 else:  # Black theme
     bg_color = "black"
     font_color = "white"
@@ -64,7 +64,6 @@ else:  # Black theme
     original_color = "#ffd700"    # bright gold
     musician_color = "#98fb98"    # pale green
     edge_normal = "#aaaaaa"       # light gray
-    edge_original = "#ffd700"     # gold
 
 # --- Function to build subgraph ---
 def build_subgraph(root, radius, filter_originals):
@@ -123,7 +122,7 @@ if query:
             text=text,
             textposition="top center",
             hoverinfo='text',
-            marker=dict(size=40, color=colors)  # Increased node size
+            marker=dict(size=node_size, color=colors)
         )
 
         fig = go.Figure(data=[edge_trace, node_trace],
@@ -135,8 +134,16 @@ if query:
                             paper_bgcolor=bg_color,
                             font=dict(color=font_color),
                             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)
+                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            dragmode="pan"  # enable pan by default
                         ))
+
+        # Show chart with zoom/pan enabled
+        st.plotly_chart(fig, use_container_width=True, config={
+            "scrollZoom": True,
+            "displayModeBar": True,
+            "displaylogo": False
+        })
 
         # Capture clicks safely
         selected_points = plotly_events(fig, click_event=True, hover_event=False)
