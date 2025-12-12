@@ -166,6 +166,7 @@ if query:
                     st.success(f"You clicked on: {clicked_node}")
                     if st.session_state.get("query") != clicked_node:
                         st.session_state["query"] = clicked_node
+                        st.experimental_rerun()  # <-- immediate rerun here
             else:
                 st.info("Click detected, but not on a node.")
     else:
