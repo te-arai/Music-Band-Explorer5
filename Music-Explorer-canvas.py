@@ -49,21 +49,28 @@ filter_originals = st.sidebar.checkbox("Only Original Members", value=False)
 theme_choice = st.sidebar.selectbox("Background Theme", ["White", "Black"])
 node_size = st.sidebar.slider("Node size", 20, 60, 40)
 
+# NEW: Sidebar slider for spread (spring_layout k parameter)
+spread_k = st.sidebar.slider("Node spread (layout k)", 0.1, 2.0, 0.8, step=0.1)
+
+# NEW: Sidebar controls for canvas size
+canvas_width = st.sidebar.slider("Canvas width (px)", 600, 1600, 1200, step=100)
+canvas_height = st.sidebar.slider("Canvas height (px)", 400, 1200, 800, step=100)
+
 # --- Theme palettes ---
 if theme_choice == "White":
     bg_color = "white"
     font_color = "black"
-    band_color = "#1f77b4"        # medium blue
-    original_color = "#ff7f0e"    # orange/gold
-    musician_color = "#2ca02c"    # green
-    edge_normal = "#888888"       # medium gray
+    band_color = "#1f77b4"
+    original_color = "#ff7f0e"
+    musician_color = "#2ca02c"
+    edge_normal = "#888888"
 else:  # Black theme
     bg_color = "black"
     font_color = "white"
-    band_color = "#6baed6"        # light blue
-    original_color = "#ffd700"    # bright gold
-    musician_color = "#98fb98"    # pale green
-    edge_normal = "#aaaaaa"       # light gray
+    band_color = "#6baed6"
+    original_color = "#ffd700"
+    musician_color = "#98fb98"
+    edge_normal = "#aaaaaa"
 
 # --- Sidebar legend/key ---
 st.sidebar.markdown("### 🔑 Color Key")
@@ -100,7 +107,8 @@ if query:
         root = lookup[query.lower()]
         subgraph = build_subgraph(root, radius, filter_originals)
 
-        pos = nx.spring_layout(subgraph, seed=42)
+        # Use spread_k from sidebar
+        pos = nx.spring_layout(subgraph, seed=42, k=spread_k)
 
         # Build edge traces
         edge_x, edge_y = [], []
@@ -150,13 +158,13 @@ if query:
                             font=dict(color=font_color),
                             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                            dragmode="pan"  # enable pan by default
+                            dragmode="pan",
+                            width=canvas_width,   # NEW: canvas width
+                            height=canvas_height  # NEW: canvas height
                         ))
 
-        # Show chart with zoom/pan enabled AND capture clicks
         selected_points = plotly_events(fig, click_event=True, hover_event=False)
 
-        # Handle clicks safely
         if selected_points:
             point = selected_points[0]
             if "pointIndex" in point:
@@ -166,6 +174,7 @@ if query:
                     st.success(f"You clicked on: {clicked_node}")
                     if st.session_state.get("query") != clicked_node:
                         st.session_state["query"] = clicked_node
+                        st.rerun()
             else:
                 st.info("Click detected, but not on a node.")
     else:
